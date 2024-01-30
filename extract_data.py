@@ -1,13 +1,32 @@
 import requests
 import pandas as pd 
 import json 
- 
-def get_data():
-    res = requests.get('https://pokeapi.co/api/v2/pokemon?limit=151&offset=0')
-    res = res.json()
-    res = res['results']
-    df = pd.DataFrame(res, columns=['name','url'])
+from concurrent.futures import ThreadPoolExecutor
+
+COLUMNS_LIST = ["id",
+                "name",
+                "height",
+                "weight",
+                "base_experience", 
+                "order"
+                ]
+
+def fetch_data(index):
+    res = requests.get(f'https://pokeapi.co/api/v2/pokemon/{index}')   
+    res = res.json() 
+    dic = {x: res[x] for x in COLUMNS_LIST}
+    df = pd.DataFrame.from_dict(dic,  orient='index')
     return df
 
 
-print(get_data())
+def extract_data():
+    data_list = []
+    with ThreadPoolExecutor(max_workers=5) as executor: 
+        futures = [executor.submit(fetch_data, i) for i in range(1, 152)] 
+        for future in futures:
+            data_list.append(future.result())
+    return data_list
+
+
+pokemon_dt = extract_data()
+
