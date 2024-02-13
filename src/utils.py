@@ -3,7 +3,6 @@ from concurrent.futures import ThreadPoolExecutor
 from sqlalchemy import create_engine
 from pathlib import Path  
 import pandas as pd 
-import numpy as np
 import configparser
 import requests
 
@@ -26,3 +25,6 @@ def extract_to_csv():
     filepath = Path('../data/exctract.csv')  
     filepath.parent.mkdir(parents=True, exist_ok=True)  
     return transform_data().to_csv(filepath, index=False)
+
+def save_in_db():
+    return transform_data().to_sql('pokemons', engine, if_exists='replace', index=False)
