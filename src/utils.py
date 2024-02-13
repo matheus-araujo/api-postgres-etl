@@ -1,8 +1,12 @@
 from constants import COLUMNS_LIST, GENERATION
-import requests
-import pandas as pd 
-import numpy as np 
 from concurrent.futures import ThreadPoolExecutor
+from sqlalchemy import create_engine
+from pathlib import Path  
+import pandas as pd 
+import numpy as np
+import configparser
+import requests
+
 
 def fetch_data(index):
     res = requests.get(f'https://pokeapi.co/api/v2/pokemon/{index}').json()
@@ -20,3 +24,7 @@ def transform_data():
     df = pd.DataFrame(data_list)
     return df
 
+def extract_to_csv():
+    filepath = Path('../data/exctract.csv')  
+    filepath.parent.mkdir(parents=True, exist_ok=True)  
+    return transform_data().to_csv(filepath, index=False)
