@@ -1,4 +1,3 @@
-#constants
 GENERATION = {"1": range(1, 152), 
               "2": range(152, 252),
               "3": range(252, 387),
